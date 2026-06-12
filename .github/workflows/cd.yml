@@ -19,19 +19,19 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          # 1. Clone repository if it doesn't exist, otherwise navigate to it
-          if [ ! -d "~/2212161-devops-project" ]; then
-            git clone https://github.com/sheroonkumar/2212161-devops-project.git ~/2212161-devops-project
+          # 1. Clone repository using absolute paths if it doesn't exist
+          if [ ! -d "/home/ubuntu/2212161-devops-project" ]; then
+            git clone https://github.com/sheroonkumar/2212161-devops-project.git /home/ubuntu/2212161-devops-project
           fi
-          cd ~/2212161-devops-project
+          cd /home/ubuntu/2212161-devops-project
 
-          # 2. Reset local tracking and pull newest main branch updates
+          # 2. Reset tracking and pull the newest changes safely
           git reset --hard origin/main
           git pull origin main
 
-          # 3. Inject application variables safely into the deployment file
+          # 3. Inject configuration variables
           echo "DATABASE_URL=postgresql://postgres:postgrespassword@postgres_db:5432/devops_db" > .env
 
-          # 4. Tear down active containers and spin up clean production layers
+          # 4. Spin up production containers using the standard compose command
           docker compose down
           docker compose up -d --build

@@ -1,0 +1,36 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Wait for the CI pipeline to pass successfully before running deployment
+    needs: lint-and-test
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Deploy to AWS EC2 via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          # 1. Enter project directory
+          cd ~/devops-project || git clone https://github.com/YOUR_USERNAME/2212161-devops-project ~/devops-project && cd ~/devops-project
+          
+          # 2. Synchronize with the latest repository changes
+          git pull origin main
+          
+          # 3. Securely regenerate environment configs
+          echo "DB_USER=postgres" > .env
+          echo "DB_PASSWORD=postgrespassword" >> .env
+          echo "DB_NAME=devops_db" >> .env
+          
+          # 4. Spin up production configurations detached
+          sudo docker compose -f docker-compose.prod.yml up -d --build

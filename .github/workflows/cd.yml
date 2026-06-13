@@ -19,22 +19,19 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          # 1. Navigate to or clone project directory using absolute pathing
           if [ ! -d "/home/ubuntu/2212161-devops-project" ]; then
             git clone https://github.com/sheroonkumar/2212161-devops-project.git /home/ubuntu/2212161-devops-project
           fi
           cd /home/ubuntu/2212161-devops-project
 
-          # 2. Synchronize with the absolute latest main branch tracking updates
           git reset --hard origin/main
           git pull origin main
 
-          # 3. Inject ALL required application environment variables completely
           echo "DB_USER=postgres" > .env
           echo "DB_PASSWORD=postgrespassword" >> .env
           echo "DB_NAME=devops_db" >> .env
           echo "DATABASE_URL=postgresql://postgres:postgrespassword@postgres_db:5432/devops_db" >> .env
 
-          # 4. Tear down legacy deadlocks and spin up production stack cleanly
-          docker compose down
-          docker compose up -d --build
+          # Explicitly target the production compose architecture file
+          docker compose -f docker-compose.prod.yml down
+          docker compose -f docker-compose.prod.yml up -d --build

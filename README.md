@@ -1,9 +1,7 @@
-# 2212161 — DevOps Final Project
+# DevOps Fundamentals Final Project
+### Student Name: Sheroon Kumar
+### Registration Number: 2212161
+### Live Deployment Endpoint: http://16.171.172.77:8000/health
 
-> **Student:** Sheroon Kumar (2212161)
-> **Course:** DevOps Fundamentals
-> **Live URL:** http://YOUR_EC2_IP:8000
-
----
-
-## Architecture
+## Project Overview
+This repository contains a containerised FastAPI microservice application backed by a persistent PostgreSQL database. The infrastructure is fully automated using GitHub Actions CI/CD pipelines deploying directly to an AWS EC2 cloud infrastructure instance.
